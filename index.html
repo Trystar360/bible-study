@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Berean — Bible Study Builder</title>
+<meta name="description" content="Describe any topic and instantly get Bible verses, discussion questions, a timed study outline, and leader resources for your next Bible study.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="#" id="brandLink">
+      <span class="brand-icon">📖</span>
+      <span class="brand-text">Berean <small>Bible Study Builder</small></span>
+    </a>
+    <nav class="main-nav">
+      <button class="nav-btn" data-view="search">🔍 Search</button>
+      <button class="nav-btn" data-view="browse">🗂️ Browse Topics</button>
+      <button class="nav-btn" data-view="saved">⭐ My Studies</button>
+      <button class="nav-btn" data-view="about">ℹ️ About</button>
+      <button class="nav-btn theme-toggle" id="themeToggle" title="Toggle dark mode">🌙</button>
+    </nav>
+  </div>
+</header>
+
+<main id="app">
+
+  <!-- ============ SEARCH VIEW ============ -->
+  <section id="view-search" class="view">
+    <div class="hero">
+      <h1>Plan a Bible study on <em>anything</em>.</h1>
+      <p class="tagline">Describe what's on your heart — a struggle, a question, a theme — and get verses, discussion questions, a timed outline, and resources to lead with confidence.</p>
+
+      <div class="search-box">
+        <textarea id="topicInput" rows="3"
+          placeholder="e.g. “Our small group is walking through a season of loss and we need hope” — or just type a topic like “forgiveness”, or a verse like “Romans 8:28”"></textarea>
+        <div class="search-actions">
+          <button id="searchBtn" class="btn btn-primary btn-lg">✨ Build My Study</button>
+          <button id="luckyBtn" class="btn btn-ghost" title="Pick a topic for me">🎲 Surprise me</button>
+        </div>
+      </div>
+
+      <div class="example-chips" id="exampleChips">
+        <span class="chips-label">Try:</span>
+      </div>
+
+      <div class="options-bar">
+        <label>📜 Translation
+          <select id="optTranslation">
+            <option value="NIV">NIV</option>
+            <option value="ESV">ESV</option>
+            <option value="NLT">NLT</option>
+            <option value="KJV">KJV</option>
+            <option value="NKJV">NKJV</option>
+            <option value="NASB">NASB</option>
+            <option value="CSB">CSB</option>
+            <option value="MSG">The Message</option>
+            <option value="WEB">WEB</option>
+          </select>
+        </label>
+        <label>👥 Audience
+          <select id="optAudience">
+            <option value="adults">Adults</option>
+            <option value="youth">Youth / Teens</option>
+            <option value="college">College / Young Adults</option>
+            <option value="new">New Believers</option>
+            <option value="kids">Kids</option>
+            <option value="mixed">Mixed Group</option>
+          </select>
+        </label>
+        <label>⏱️ Length
+          <select id="optDuration">
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+            <option value="60" selected>60 min</option>
+            <option value="75">75 min</option>
+            <option value="90">90 min</option>
+          </select>
+        </label>
+        <label>🧭 Format
+          <select id="optFormat">
+            <option value="discussion">Group Discussion</option>
+            <option value="inductive">Inductive (Observe · Interpret · Apply)</option>
+            <option value="devotional">Devotional / Reflective</option>
+            <option value="topical">Topical Deep-Dive</option>
+          </select>
+        </label>
+        <label>🔢 Group size
+          <select id="optGroupSize">
+            <option value="small">2–5 people</option>
+            <option value="medium" selected>6–12 people</option>
+            <option value="large">13+ people</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div id="votd" class="votd-card" hidden>
+      <div class="votd-label">🌅 Verse of the Day</div>
+      <blockquote id="votdText"></blockquote>
+      <cite id="votdRef"></cite>
+    </div>
+
+    <div id="recentSearches" class="recent-searches" hidden>
+      <h3>🕘 Recent searches</h3>
+      <div class="chip-row" id="recentChips"></div>
+    </div>
+
+    <div id="searchResults" class="results" hidden>
+      <h2 id="resultsHeading"></h2>
+      <div id="resultsList" class="topic-grid"></div>
+    </div>
+
+    <div id="passageResult" class="passage-result" hidden></div>
+  </section>
+
+  <!-- ============ BROWSE VIEW ============ -->
+  <section id="view-browse" class="view" hidden>
+    <h1>🗂️ Browse all topics</h1>
+    <p class="muted">Every topic in the library, organized by category. Click any card to build a study.</p>
+    <div class="chip-row" id="categoryFilters"></div>
+    <div id="browseList"></div>
+  </section>
+
+  <!-- ============ STUDY VIEW ============ -->
+  <section id="view-study" class="view" hidden>
+    <div class="study-toolbar no-print">
+      <button class="btn btn-ghost" id="backBtn">← Back</button>
+      <div class="toolbar-actions">
+        <button class="btn" id="saveStudyBtn">⭐ Save Study</button>
+        <button class="btn" id="printBtn">🖨️ Print Guide</button>
+        <button class="btn" id="downloadBtn">⬇️ Download (.md)</button>
+        <button class="btn" id="copyBtn">📋 Copy All</button>
+        <button class="btn" id="shareBtn">🔗 Share Link</button>
+      </div>
+    </div>
+    <div id="studyContent"></div>
+  </section>
+
+  <!-- ============ SAVED VIEW ============ -->
+  <section id="view-saved" class="view" hidden>
+    <h1>⭐ My Studies</h1>
+    <p class="muted">Saved studies and notes live in your browser — no account needed.</p>
+    <div id="savedList"></div>
+    <h2>💛 Saved verses</h2>
+    <div id="savedVerses"></div>
+  </section>
+
+  <!-- ============ ABOUT VIEW ============ -->
+  <section id="view-about" class="view" hidden>
+    <h1>ℹ️ About Berean</h1>
+    <div class="about-body">
+      <p><strong>Berean</strong> helps small-group leaders, teachers, and anyone curious prepare a Bible study fast. Describe a topic in your own words and Berean matches it against a hand-built topical library, then assembles verses, discussion questions, a timed outline, leader tips, and trusted external resources.</p>
+      <p>Named for the Bereans of Acts 17:11, who <em>“received the word with all readiness of mind, and searched the scriptures daily, whether those things were so.”</em></p>
+      <h3>Features</h3>
+      <ul>
+        <li>🔍 Natural-language topic search with synonym matching and verse-reference lookup</li>
+        <li>📖 Live verse text (public-domain translations via <a href="https://bible-api.com" target="_blank" rel="noopener">bible-api.com</a>), plus one-click links to your preferred translation on BibleGateway and Blue Letter Bible</li>
+        <li>🧭 Study outline generator with a timed agenda tuned to your group length, size, audience, and format</li>
+        <li>💬 Discussion questions structured as Opening → Observation → Interpretation → Application</li>
+        <li>🎯 Icebreakers, activities, leader tips, and prayer prompts per topic</li>
+        <li>⭐ Save studies, bookmark verses, and keep private notes (stored locally in your browser)</li>
+        <li>🖨️ Print-ready study guides, Markdown export, copy-to-clipboard, and shareable links</li>
+        <li>🌙 Dark mode, verse of the day, related-topic exploration, and a full topic browser</li>
+      </ul>
+      <h3>A note on sources</h3>
+      <p>In-page verse text uses public-domain translations (World English Bible, KJV, ASV, BBE). Links to NIV, ESV, NLT, and other modern translations open on BibleGateway. External resource links (GotQuestions, BibleProject, Blue Letter Bible, OpenBible, Desiring God) are provided for further research; Berean isn't affiliated with them.</p>
+      <p class="muted">Open source, static, and free. No tracking, no account, no server — your notes never leave your device.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>“Your word is a lamp to my feet, and a light for my path.” — Psalm 119:105</p>
+  <p class="muted">Built with ❤️ · Verse text from <a href="https://bible-api.com" target="_blank" rel="noopener">bible-api.com</a> (public domain translations)</p>
+</footer>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="assets/data.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
